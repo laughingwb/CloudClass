@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}登录{% endblock %}
+
+<div class="section section-gray">
+    {% block content %}
+        <div class="container">
+            <div class="col-md-8 col-md-offset-2 card">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2 text-center">
+                            <h5>登 录</h5>
+                        </div>
+                        <form action="/account/loginAccount/" method="POST" id="login-form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-8 col-md-offset-2">
+                                    {% ifequal code '1' %}
+                                        <div class="row text-center"><label style="color: red">账号或密码错误</label></div>
+                                    {% endifequal %}
+                                    {% ifequal code '2' %}
+                                        <div class="row text-center"><label style="color: red">用户不存在</label></div>
+                                    {% endifequal %}
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i style="font-size: 20px" class="fa pe-7s-users"></i></span>
+                                        <input type="text" required="required" class="form-control" id="username" name="username" placeholder="用户名或者Email" class="form-control">
+                                    </div>
+                                    <div style="margin-top: 10px" class="input-group">
+                                        <span class="input-group-addon"><i style="font-size: 20px" class="fa pe-7s-unlock"></i></span>
+                                        <input required="required" id="password" name="password" type="password" placeholder="密码" class="form-control">
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-12 text-right">
+                                            <a href="/accounts/password/reset/">
+                                                <label style="font-size: 14px;color: #66afe9">
+                                                    忘记密码
+                                                </label>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                            <button type="submit" class="btn btn-block btn-round btn-fill btn-info">登 录</button><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+</div>

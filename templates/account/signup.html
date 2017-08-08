@@ -2,8 +2,53 @@
 {% load staticfiles %}
 
 {% block title %}注册{% endblock %}
+   <div class="section section-gray">
 {% block content %}
-
-
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 ">
+                    <div class="card">
+	                    <div class="card-block">
+                            <div class="row text-center">
+                        	    <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                            	    <h4>注 册</h4>
+                                </div>
+                            </div>
+                        </div>
+                         <form id="signup_form" method="post" action="/account/signupAccount/">
+                             {% csrf_token %}
+                             <div class="row">
+                                 <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i style="font-size: 20px" class="fa pe-7s-users"></i></span>
+                                        <input type="text" autofocus="autofocus" required="required" class="form-control" id="id_username" name="username" placeholder="用户名" class="form-control">
+                                    </div>
+                                     <div style="margin-top: 10px" class="input-group">
+                                        <span class="input-group-addon"><i class="fa pe-7s-mail"></i></span>
+                                        <input id="id_email" name="email" title="" type="email" placeholder="邮箱" class="form-control">
+                                     </div>
+                                     <div style="margin-top: 10px" class="input-group">
+                                        <span class="input-group-addon"><i style="font-size: 20px" class="fa pe-7s-unlock"></i></span>
+                                        <input required="required" id="id_password1" name="password1" type="password" placeholder="密码" class="form-control">
+                                     </div>
+                                     <div style="margin-top: 10px" class="input-group">
+                                        <span class="input-group-addon"><i style="font-size: 20px" class="fa pe-7s-unlock"></i></span>
+                                        <input required="required" id="id_password2" name="password2" type="password" placeholder="重复密码" class="form-control">
+                                     </div>
+                                     <br>
+                                     <div class="row">
+                                        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                            <button type="submit" class="btn btn-round btn-block btn-fill btn-info">注 册</button><br>
+                                        </div>
+                                     </div>
+                                </div>
+                             </div>
+                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
+   </div>
+
 

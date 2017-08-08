@@ -1,0 +1,173 @@
+{% load i18n %}
+{% load staticfiles %}
+<html lang="en" {% block htmlattr %}{% endblock %}>
+<head>
+	<meta charset="utf-8" />
+{#	<link rel="apple-touch-icon" sizes="76x76" href="/static/images/apple-icon.png">#}
+{#	<link rel="icon" type="image/png" sizes="96x96" href="../assets/img/favicon.png">#}
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>{% block title %}云课堂{% endblock %}</title>
+	{% block description %}
+
+	{% endblock %}
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" />
+    <link href="{% static "css/gsdk.css" %}" rel="stylesheet"/>
+    <link href="{% static "css/webapp.css" %}" rel="stylesheet"/>
+
+    <!--     Fonts and icons     -->
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+    <link href="{% static 'css/pe-icon-7-stroke.css' %}" rel="stylesheet" />
+	{% block extra_head %}{% endblock %}
+
+</head>
+<body style="background-color: white">
+   <nav class="navbar navbar-ct-azure navbar-icons" role="navigation-demo">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{% block welcome_content %}欢迎来到云课堂{% endblock %}</a>
+        </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navigation-example-2">
+            {% block navcontent %}
+          <ul class="nav navbar-nav navbar-right">
+                <li>
+                   <a href="/mylife/home/">
+                        <i class="pe-7s-science"></i>
+                        <p>教学模式</p>
+                    </a>
+                </li>
+                <li>
+                   <a href="/message/showmessage/" >
+                        <i class="pe-7s-study"></i>
+                        <p>课程介绍</p>
+                    </a>
+                </li>
+                <li>
+                   <a href="" >
+                        <i class="pe-7s-credit"></i>
+                        <p>收费模式</p>
+                    </a>
+                </li>
+                <li>
+                   <a href="/aboutme/aboutme/" >
+                        <i class="pe-7s-home"></i>
+                        <p>登录</p>
+                    </a>
+                </li>
+                <li>
+                   <a href="/account/signup/" >
+                        <i class="pe-7s-user"></i>
+                        <p>注册</p>
+                    </a>
+                </li>
+           </ul>
+            {% endblock %}
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    {% block content %}
+
+    {% block sidebar %}
+    {% endblock sidebar%}
+
+    {% block maincontent %}
+    {% endblock maincontent%}
+
+    {% endblock content%}
+   <footer class="footer footer-big footer-black">
+        <!-- .footer-black is another class for the footer, for the transparent version, we recommend you to change the url of the image with your favourite image.          -->
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2">
+                    <h5 class="title">公司</h5>
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="/" >
+                                    主页
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/about/approach/">
+                                    教学模式
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/about/tutor/">
+                                    专业师资
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/about/curriculum/">
+                                    课程体系
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    关于我们
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-3 col-md-offset-1">
+                    <h5 class="title"> 技术支持</h5>
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="#">
+                                   联系我们
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                   如何使用
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                   We are hiring
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="title"> 帮助</h5>
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="#">
+                                   联系我们
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/legal/">
+                                    条款
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/legal#privacy">
+                                    隐私政策
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+            <hr />
+            <div class="copyright">
+                &copy; 2017 WangBo, Communication Inspires Future
+            </div>
+        </div>
+    </footer>
+</body>

@@ -52,3 +52,4 @@ def signupAccount(request):
         userInfo = UserInfo.objects.create(username = username)
         login(request, user)
     return render(request, 'userprofile/profile.html')
+

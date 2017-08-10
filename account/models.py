@@ -27,10 +27,4 @@ class UserInfo(models.Model):
     def __str__(self):
         return self.user.username
 
-class TourInfo(models.Model):
-    user = models.OneToOneField(User)
-    course = ForeignKey(Course, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to=get_file_path, blank=True)
-    introduction = models.TextField(max_length=300, null=True, blank=True)
-    score = models.IntegerField(default=0)
 

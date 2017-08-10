@@ -49,7 +49,19 @@ def signupAccount(request):
     except ObjectDoesNotExist:
         user = User.objects.create_user(username, email, password)
         user.save()
-        userInfo = UserInfo.objects.create(username = username)
-        login(request, user)
+        userInfo = UserInfo.objects.create(user=user)
+        loginuser = authenticate(username=username, password=password)
+        if loginuser is not None:
+            # the password verified for the user
+            if loginuser.is_active:
+                print("User is valid, active and authenticated")
+                login(request, loginuser)
+                return render(request, 'userprofile/profile.html')
+            else:
+                print("The password is valid, but the account has been disabled!")
+                return render(request, "account/login.html", {'code': '1'})
+        else:
+            print("The username and password were incorrect.")
+            return render(request, "account/login.html", {'code': '2'})
     return render(request, 'userprofile/profile.html')
 

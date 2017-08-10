@@ -13,7 +13,8 @@ class Programme(models.Model):
     programme_name = models.CharField(max_length = 50)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-
+    def __str__(self):
+        return self.programme_name
 
 class Course(models.Model):
     programme = ForeignKey(Programme, on_delete=models.CASCADE)
@@ -38,7 +39,7 @@ class Session(models.Model):
     session_name = property(_get_session_name)
 
     def __str__(self):
-        return self.session_name
+        return self.course.course_name + '-' + self.session_name
 
 
 class Courseware(models.Model):
@@ -54,3 +55,6 @@ class Courseware(models.Model):
         permissions = (
             ("can_upload_courseware", "Can upload courseware"),
         )
+
+    def __str__(self):
+        return self.session.course.course_name + '-' + self.session.session_name

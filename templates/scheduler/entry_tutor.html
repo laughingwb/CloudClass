@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %}预约{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1 card">
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 text-center">
+                        <h4>约课安排</h4>
+                    </div>
+                    <div class="col-md-3 col-sm-4 text-middle">
+                        <br><br>
+                        <a href="/scheduler/calendar">我的日程表</a>
+                        <br>
+                    </div>
+                </div>
+                <div class="row table-responsive">
+                    <div class="col-md-10 col-md-offset-1">
+                        <table class="table">
+                        <thead>
+                            <th>约课时间</th>
+                            <th>学生信息</th>
+                            <th>约课变更</th>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

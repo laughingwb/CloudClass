@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.template import RequestContext
 from django.contrib.auth.models import User
 from .models  import UserInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout,login
+from django.shortcuts import render, redirect
+from django.shortcuts import render,render_to_response
+from tutor.utils import is_tutor
+from django.http import HttpResponseRedirect
 # Create your views here.
 
 
@@ -23,7 +28,6 @@ def loginAccount(request):
         if user.is_active:
             print("User is valid, active and authenticated")
             login(request, user)
-            return render(request, 'userprofile/profile.html')
         else:
             print("The password is valid, but the account has been disabled!")
             return render(request, "account/login.html", {'code': '1'})
@@ -32,7 +36,15 @@ def loginAccount(request):
         return render(request, "account/login.html", {'code': '2'})
         # the authentication system was unable to verify the username and password
 
-    return render(request, 'userprofile/profile.html')
+    if is_tutor(request.user):
+        # return redirect('scheduler.views.entry_tutor')
+        return redirect('userprofile.views.tutor_profile')
+    else:
+        return render_to_response('userprofile/profile.html')
+
+@login_required
+def logouthtml(request):
+    return render(request, 'account/logout.html')
 
 def logoutAccount(request):
     print(request.user.username + ' Logout')

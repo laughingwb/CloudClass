@@ -54,5 +54,6 @@ class Courseware(models.Model):
         permissions = (
             ("can_upload_courseware", "Can upload courseware"),
         )
+
     def __str__(self):
-        return self.course.course_name +'-' + self.session_name
+        return self.session.course.course_name + '-' + self.session.session_name

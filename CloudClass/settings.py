@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'scheduler',
     'userprofile',
     'virtualclass',
+    'tutor',
 )
 
 MIDDLEWARE_CLASSES = (

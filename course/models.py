@@ -13,7 +13,8 @@ class Programme(models.Model):
     programme_name = models.CharField(max_length = 50)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-
+    def __str__(self):
+        return self.programme_name
 
 class Course(models.Model):
     programme = ForeignKey(Programme, on_delete=models.CASCADE)
@@ -38,13 +39,12 @@ class Session(models.Model):
     session_name = property(_get_session_name)
 
     def __str__(self):
-        return self.session_name
+        return self.course.course_name +'-' + self.session_name
 
 
 class Courseware(models.Model):
     session = ForeignKey(Session, on_delete=models.CASCADE)
     cw_type = models.CharField(max_length=20, choices=(('ppt', 'ppt'), ('image', 'image')), default='image')
-    cw_seq = models.IntegerField()
     # cw_content = models.FileField(upload_to='cw/%Y/%m')
     cw_content = models.FileField(upload_to=get_file_path)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -54,3 +54,5 @@ class Courseware(models.Model):
         permissions = (
             ("can_upload_courseware", "Can upload courseware"),
         )
+    def __str__(self):
+        return self.course.course_name +'-' + self.session_name

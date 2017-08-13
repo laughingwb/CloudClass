@@ -22,12 +22,14 @@ def loginhtml(request):
 def loginAccount(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
-    user = authenticate(username=username, password=password)
-    if user is not None:
+    print(username)
+    print(password)
+    loginuser = authenticate(username=username, password=password)
+    if loginuser is not None:
         # the password verified for the user
-        if user.is_active:
+        if loginuser.is_active:
             print("User is valid, active and authenticated")
-            login(request, user)
+            login(request, loginuser)
         else:
             print("The password is valid, but the account has been disabled!")
             return render(request, "account/login.html", {'code': '1'})
@@ -56,6 +58,7 @@ def signupAccount(request):
     username = request.POST.get('username', '')
     email = request.POST.get('email', '')
     password = request.POST.get('password1', '')
+    print(password)
     try:
         user = User.objects.get(username=username)
         return render(request, 'account/signup.html')
@@ -69,7 +72,7 @@ def signupAccount(request):
             if loginuser.is_active:
                 print("User is valid, active and authenticated")
                 login(request, loginuser)
-                return render(request, 'userprofile/profile.html')
+                return redirect('userprofile.views.profile')
             else:
                 print("The password is valid, but the account has been disabled!")
                 return render(request, "account/login.html", {'code': '1'})

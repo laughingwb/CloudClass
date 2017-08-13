@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 def tutor_profile(request):
     return render(request, 'userprofile/tutor_profile.html')
 
+@login_required
+def profile(request):
+    return render(request, 'userprofile/profile.html')
 
 def man_home(request):
     return render(request, 'man/index.html')

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django.contrib.auth.models import User
-from .models  import UserInfo
+from .models  import UserDetail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout,login
 from django.shortcuts import render, redirect
@@ -40,7 +40,8 @@ def loginAccount(request):
         # return redirect('scheduler.views.entry_tutor')
         return redirect('userprofile.views.tutor_profile')
     else:
-        return render_to_response('userprofile/profile.html')
+        return redirect('userprofile.views.profile')
+
 
 @login_required
 def logouthtml(request):
@@ -61,7 +62,7 @@ def signupAccount(request):
     except ObjectDoesNotExist:
         user = User.objects.create_user(username, email, password)
         user.save()
-        userInfo = UserInfo.objects.create(user=user)
+        userInfo = UserDetail.objects.create(user=user)
         loginuser = authenticate(username=username, password=password)
         if loginuser is not None:
             # the password verified for the user

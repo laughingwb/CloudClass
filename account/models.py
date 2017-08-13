@@ -11,7 +11,7 @@ def get_file_path(instance, filename):
     filename = "%s.%s" % (uuid.uuid4(), ext)
     return os.path.join('avatar', filename)
 
-class UserInfo(models.Model):
+class UserDetail(models.Model):
     user = models.OneToOneField(User)
     avatar = models.ImageField(upload_to=get_file_path, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)

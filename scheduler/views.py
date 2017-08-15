@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from scheduler.utils import get_localized_datetime
 from scheduler.utils import get_monday_of_the_week as get_monday
 from scheduler.utils import get_next_monday_of_the_week as get_next_monday
-from scheduler.models import Event, EventSubscription, EventManager, Appointment
+from scheduler.models import Event, EventSubscription, Appointment, EventManager
 from django.core.serializers.json import DjangoJSONEncoder
 # Create your views here.
 
@@ -23,6 +23,10 @@ def entry(request):
 @login_required
 def entry_tutor(request):
     return render(request, 'scheduler/entry_tutor.html')
+
+def scheduler_publish(request):
+
+    return redirect('/scheduler/calendar/')
 
 @login_required
 def calendar(request):
@@ -46,6 +50,6 @@ def calendar(request):
     print(occurrences)
 
     return render(request, 'scheduler/calendar.html',
-                  {'occurrences': json.dumps([o.__dict__ for o in occurrences], cls=DjangoJSONEncoder), 'date': d,
+                  {'occurrences': '', 'date': d,
                    'event_duration': Event.default_event_duration,
                    })

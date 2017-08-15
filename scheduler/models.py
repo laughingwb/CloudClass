@@ -120,7 +120,7 @@ class Appointment(models.Model):
     )
     original_start = models.DateTimeField()
     original_end = models.DateTimeField()
-    schedule_time = models.DateTimeField()
+    scheduled_time = models.DateTimeField()
     hosts = models.ManyToManyField(User, related_name='hosts')
     invitees = models.ManyToManyField(User, related_name='invitees')
     status = models.IntegerField(choices=STATUS_CHOICES)

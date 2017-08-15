@@ -14,6 +14,8 @@ function getDateOfWeek(d, x) {
 
 
     var day = d.getDay();
+    if(day==0)
+    	day=7;
     diff = d.getDate() - day + x; // adjust when day is sunday
     return new Date(d.setDate(diff));
 }

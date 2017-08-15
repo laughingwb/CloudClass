@@ -3,6 +3,57 @@
 {% load i18n %}
 
 {% block content %}
+     <style type="text/css">
+
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 0px 0px;
+            vertical-align: middle;
+        }
+
+        .td-grid {
+            padding: 0px 0px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: block;
+            height: 100%;
+            width: 100%;
+            align: center;
+        }
+
+        .grid-white {
+            background-color: #ffffff;
+
+        }
+
+        .grid-limegreen {
+            background-color: #32cd32;
+
+        }
+
+        .grid-green {
+            background-color: #78ca37;
+            position: relative;
+
+        }
+
+        .grid-yellow {
+            background-color: #ffa724;
+
+        }
+
+        .grid-cyan {
+            background-color: #3ebfff;
+
+        }
+
+    </style>
     <div class="section section-gray">
         <div class="container">
             <div class="col-md-1">
@@ -27,16 +78,296 @@
 
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <BR>
-                    <BR>
-                    <BR>
-                    <BR>
-                    <BR>
-                    <h1><a href="/scheduler/calendar/?date={{ date }}&action=next"> &gt; </a></h1>
+            </div>
+            <div class="col-md-2">
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <h1><a href="/scheduler/calendar/?date={{ date }}&action=next"> &gt; </a></h1>
+                <div class="table-responsive">
+                    <tr>
+                        <td>
+                            <div class="grid-green">&nbsp;&nbsp;</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>可预约<BR>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid-yellow">&nbsp;&nbsp;</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>已预约<BR>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="grid-white">&nbsp;&nbsp;</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>不可预约<BR>&nbsp;</td>
+                    </tr>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-labelledby="settingModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form action="/scheduler/scheduler_publish/" method="post" enctype="multipart/form-data" id="form_event">
+                        {% csrf_token %}
+                        <input type="hidden" name="date" value="{{ date }}"/><br>
+                        <input type="hidden" name="current_dt"/><br>
+                        <input type="hidden" id="event_id" name="event_id" value=""/><br>
+                        <input type="hidden" id="event_start" name="event_start"/>
+                        <input type="hidden" id="event_end" name="event_end"/>
+                        <table class="table table-responsive">
+                            <tr>
+                                <td>预约时间: </td>
+                                <td><input type="text" id="display_scheduled_time" style="width: 30em;" readonly/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>起始日期: </td>
+                                <td><input type="text" id="display_event_start" style="width: 30em;" readonly/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>截止日期 : </td>
+                                <td><input type="text" id="end_recurring_period" name="end_recurring_period" class="datepicker form-control" data-date-format="yyyy-mm-dd"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                <button type="button" class="btn btn-primary btn-block" onclick="submit_data()">submit</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="col-sm-12" style="display: none;" id="div_delete">
+                            <hr />
+            				<div class="col-sm-8">
+                                在没有人预约该约课时间以前，你可以删除该约课时间
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-primary btn-block" onclick="delete_it()">delete
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_ending %}
+    {{ block.super }}
+<script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'js/webapp-scheduler.js' %}"></script>
+<script type="text/javascript">
+    var classDuration = {{ event_duration }};
+        var json = '{{ occurrences|safe }}';
+        var ds = '{{ date }}';
+        var nameOfDay = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期6", "星期日"];
+
+        // 删除 subscrption
+        var delete_it = function () {
+            if ($('#event_id').val() == '')
+                return;
+            $.get("/scheduler/delete_event/?event_id=" + $('#event_id').val())
+                    .done(function (msg) {
+                        alert(msg);
+                        window.location.reload()
+                    });
+        }
+
+        $(document).ready(function () {
+
+            var thead_html = '<tr><td class="text-center td-grid">Time</td>';
+
+            for (var day = 0; day < nameOfDay.length; day++) {
+                thead_html = thead_html + '<td class="text-center td-grid">'
+                        + getISODateString(getDateOfWeek(ds, day + 1)) + '<br>(' + nameOfDay[day] + ')</td>';
+            }
+            thead_html = thead_html + "</tr>";
+
+            $(thead_html).appendTo('#calendar-thead');
+
+            var today = new Date();
+            var tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
+            //temparary solution for json encoding/decoding
+            //if(json != null && json.length > 2) {
+            //	json = json.substring(1,json.length-1);
+            //}
+
+            var events;
+            if (json.length > 0)
+                events = JSON.parse(json);
+            for (var hour = 7; hour < 22; hour++) {
+                var html = '<tr><td class="text-center td-grid">' + ('0' + hour).slice(-2) + ':00</td>';
+                for (var day = 0; day < nameOfDay.length; day++) {
+
+                    var clickable = true;
+                    //var clickable = false;
+                    //if(getDateOfWeek(ds, day) >= tomorrow)
+                    //	clickable = true;
+
+                    var status = "na";
+                    var event_id = "";
+                    var event_start = "";
+                    var event_end = "";
+                    var end_recurrring_period = "";
+
+                    if (events != null) {
+
+                        for (var i = 0; i < events.length; i++) {
+                            //console.log(events[i].start);
+
+                            var start = new Date(events[i].start);
+                            var day_in_the_week = start.getDay();
+                            if (day_in_the_week == 0)
+                                day_in_the_week = 7;
+                            if (start.getHours() == hour && day_in_the_week == day + 1) {
+                                //console.log("day:" + events[i].day_of_the_week + "; hour:" + events[i].hour_of_the_day);
+                                //console.log("day:" + nameOfDay[day] + "; hour:" + hour);
+                                status = "available";
+                                event_id = events[i].event_id;
+                                event_start = events[i].event_start;
+                                event_end = events[i].event_end;
+                                end_recurring_period = events[i].event_end_recurring_period;
+                                if (events[i].subscription_id != null) {
+                                    status = "subscribed";
+                                    clickable = true;
+                                }
+                            }
+                        }
+                    }
+
+                    var click_start = "";
+                    var click_end = "";
+                    if (clickable) {
+                        click_start = '<a href="#" data-toggle="modal" data-target="#settingModal" onclick="toggleGrid(';
+                        click_start = click_start + day + ',';
+                        click_start = click_start + hour + ',\'';
+                        click_start = click_start + event_id + '\',\'';
+                        click_start = click_start + event_start + '\',\'';
+                        click_start = click_start + event_end + '\',\'';
+                        click_start = click_start + getDateOfWeek(ds, day + 1).toLocaleDateString()  + '\',\''; // current
+                        click_start = click_start + end_recurring_period + '\')">';
+                        click_end = '</a>';
+                    }
+                    //console.log(click_start);
+
+                    var debug_event_id = "";
+                    {% if isdebug  %}
+                        debug_event_id = '<span style="color:black;">' + event_id + '</span>';
+                    {% endif %}
+
+                    if (status == "available")
+                        html = html + '<td class="td-grid">' + click_start + '<div class="grid grid-green" id="' + 'grid' + day + hour + '">&nbsp;'+debug_event_id+'</div>' + click_end + '</td>';
+                    else if (status == "subscribed")
+                        html = html + '<td class="td-grid">' + click_start + '<div class="grid grid-yellow" id="' + 'grid' + day + hour + '">&nbsp;'+debug_event_id+'</div>' + click_end + '</td>';
+                    else
+                        html = html + '<td class="td-grid">' + click_start + '<div class="grid grid_white" id="' + 'grid' + day + hour + '">&nbsp;'+debug_event_id+'</div>' + click_end + '</td>';
+
+                }
+                html = html + '</tr>';
+                $(html).appendTo('#calendar-table');
+            }
+        });
+
+        function toggleGrid(day, hour, event_id, event_start, event_end, current_dt, end_recurring_period) {
+            //console.log(event_start);
+            //if ($("#grid" + day + hour).hasClass("grid-green")) {
+            //$("#grid" + day + hour).removeClass("grid-green").addClass("grid-white");
+            $("current_dt").val(current_dt);
+            if (event_id != null && event_id != "" && event_id != "null") {
+                var t_start = new Date(event_start);
+                var t_end = new Date(event_end);
+
+                var str_start = t_start.toLocaleTimeString()
+                    + " - " + t_end.toLocaleTimeString()
+                    + " 每星期" + nameOfDay[t_start.getDay() == 0 ? 6 : t_start.getDay()-1];
+
+                $("#display_scheduled_time").val(str_start);
+                $("#display_event_start").val(getISODateString(t_start));
+
+                $("#event_start").val(event_start);
+                $("#event_end").val(event_end);
+
+                t_end_recurring_period = new Date(end_recurring_period);
+
+                t_end_recurring_period.setDate(t_end_recurring_period.getDate() - 1);//the expiry day is inclusive
+
+                $("#end_recurring_period").val(getISODateString(t_end_recurring_period));
+
+                //$("#display_end_recurring_period").val(t_end_recurring_period.toISOString().substring(0,10));
+                $("#event_id").val(event_id);
+
+                $("#div_delete").show();
+            }
+            else {
+                // fromat will be "7:00am-7:45am every Wednesday"
+
+                // process event_start
+                var t_start = getDateOfWeek(ds, day + 1);
+                t_start.setHours(hour);
+                $("#event_start").val(t_start.toISOString());
+
+                // process event_end
+                var t_end = getDateOfWeek(ds, day + 1);
+                t_end.setHours(hour);
+                t_end.setMinutes(t_start.getMinutes() + classDuration);// default value is 45 mins or 60 mins
+                var str_start = t_start.toLocaleTimeString() + " - " + t_end.toLocaleTimeString()
+                	+ "  每" + nameOfDay[t_start.getDay() == 0 ? 6 : t_start.getDay()-1];
+
+                $("#display_scheduled_time").val(str_start);
+                $("#display_event_start").val(getISODateString(t_start));
+                $("#event_end").val(t_end.toISOString());
+
+                // process end_recurring_period
+                t_start.setMonth(t_start.getMonth() + 1);// default value is 1 month
+                $("#end_recurring_period").val(getISODateString(t_start));
+                //$("#display_end_recurring_period").val(t_start.toLocaleDateString());
+
+                $("#event_id").val(event_id);
+
+                $("#div_delete").hide();
+            }
+        }
+
+        function verification() {
+
+            var e_start = $("#event_start").val();
+            var e_end_recurring_period = $("#end_recurring_period").val();
+
+            if (! isDateString(e_end_recurring_period))
+                return "{% trans 'you must fill a valid date for event end recurring period.' %}";
+
+            if (! isEarlierOrSame(e_start, e_end_recurring_period))
+                return "{% trans "Event start must be earlier than the Event end date." %}";
+
+            return undefined;
+        }
+
+        function submit_data(type) {
+
+            // 添加时间
+            var msg = verification();
+            if (!msg) {
+                $("#form_event").submit();
+            } else {
+                alert(msg)
+            }
+        }
+</script>
 {% endblock %}

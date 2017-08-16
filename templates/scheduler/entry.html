@@ -2,3 +2,36 @@
 {% load staticfiles %}
 {% load i18n %}
 {% block title %}我的预约{% endblock %}
+
+{% block content %}
+     <div class="section section-gray">
+        <div class="container">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="card">
+                	<div class="row">
+                		<div class="col-md-6 col-md-offset-3 col-sm-4 col-sm-offset-4 text-center">
+                			<h4>{% trans "Appointment" %}</h4>
+						</div>
+						<div class="col-md-3 col-sm-4 text-middle">
+							<br><br>
+                    		<a href="/tutor/tutor_list/">更多老师</a>
+                    	</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>预约时间</th>
+                                <th>教师</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+{% endblock %}

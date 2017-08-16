@@ -99,6 +99,55 @@ class Event(models.Model):
     def __str__(self):
         return '{0} ({1} - {2})'.format(self.user.username, self.start, self.end_recurring_period)
 
+    def get_occurrence_list(self, start, end, event_subscription=None):
+        o_start = self.start
+        o_end = self.end
+
+        week = timedelta(weeks=1)
+        occurrences = []
+
+        while o_start < end:
+            if o_start >= start and o_start <= self.end_recurring_period:
+                s_start = None
+                s_end = None
+                s_invitee = None
+                s_id = None
+                if not event_subscription:
+
+                    event_subscription = EventSubscription.objects.filter(event=self, start_time__lte=o_start,
+                                                                          end_time__gte=o_start).first()
+                if event_subscription:
+                    s_id = event_subscription.id
+                    s_start = event_subscription.start_time
+                    s_end = event_subscription.end_time
+                    s_invitee = event_subscription.invitee.id
+                occurrence = Occurrence(self.id, o_start, o_end, self.start, self.end, self.end_recurring_period, s_id,
+                                        s_start, s_end, s_invitee)
+                occurrences.append(occurrence)
+
+            o_start = o_start + week
+            o_end = o_end + week
+
+        return occurrences
+
+
+class Occurrence():
+    def __init__(self, event_id, start, end, event_start, event_end, event_end_recurring_period, s_id, s_start, s_end,
+                 s_invitee):
+        self.event_id = event_id
+        self.event_start = event_start
+        self.event_end = event_end
+        self.event_end_recurring_period = event_end_recurring_period
+        self.start = start
+        self.end = end
+        self.subscription_id = s_id
+        self.subscription_start = s_start
+        self.subscription_end = s_end
+        self.subscription_invitee = s_invitee
+
+    def __str__(self):
+        return 'event id: {0} ({1} - {2})'.format(self.event_id, self.start, self.end)
+
 class EventSubscription(models.Model):
     event = ForeignKey(Event, on_delete=models.CASCADE)
     invitee = ForeignKey(User, on_delete=models.CASCADE)

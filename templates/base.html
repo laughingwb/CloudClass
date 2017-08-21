@@ -182,39 +182,6 @@
 				$("#messageModal").modal();
 				setTimeout(function() {$('#messageModal').modal('hide');}, 3000);
             }
-
-            var imgURL = "{% static 'images/promotion_201706.jpg' %}";
-
-        	if(window.innerHeight > window.innerWidth){
-        		imgURL = "{% static 'images/promotion_201706_mobile.jpg' %}";
-        	}
-
-        	promoBox({
-                    imagePath: imgURL,
-                    link: '/promotion#top-up_bonus',
-                    target: '_blank',
-                    disableOverlay: false,
-                    disableOverlayClose: false,
-                    disableStyles: false,
-                    disableCloseButton: false,
-                    disableKeyClose: false,
-                    closeButtonText: '',
-//                    showScrollbar: true,
-//                    randomWeight: 0.5,
-//                    showOnUrl: ["/", "/accounts/profile"],
-//                    hideOnUrl: '?disable',
-//                    startDate: 'April 12, 2014 02:30:00',
-//                    endDate: 'May 20, 2014 19:27:00',
-                    frequency: 1,
-                    deleteCookieOnUrl: '#clear',
-                    fadeInDuration: 0.5,
-                    fadeOutDuration: 0.2,
-//                    loadDelay: 0.5,
-//                    interstitialSkipText: 'Skip this advertisement',
-//                    interstitialText: 'or wait %s secs',
-                    autoCloseSeconds: 30
-                });
-
         });
 
 

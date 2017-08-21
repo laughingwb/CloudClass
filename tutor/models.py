@@ -17,5 +17,7 @@ class Tutor(models.Model):
     avatar = models.ImageField(upload_to=get_file_path, blank=True)
     introduction = models.TextField(max_length=300, null=True, blank=True)
     score = models.IntegerField(default=0)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.user.username

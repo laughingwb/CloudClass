@@ -1,8 +1,8 @@
-from tutor.models import Tutor
+from tutor.models import Teacher
 
 
 def is_tutor(user):
-    tutor = Tutor.objects.filter(user=user).first()
+    tutor = Teacher.objects.filter(user=user).first()
 
     if tutor:
         return True

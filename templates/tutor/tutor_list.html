@@ -2,3 +2,58 @@
 {% load staticfiles %}
 {% load i18n %}
 {% block title %}教师{% endblock %}
+
+
+{% block content %}
+    <div class="section section-gray">
+           <div class="container">
+               {% if  tutors %}
+                   {% for tutor in tutors %}
+                       <div class="col-md-4">
+                           <div class="card card-user">
+                               <div class="image">
+
+                               </div>
+                               <div class="content">
+                                   <div class="author">
+                                       <a href="/scheduler/event?user={{ tutor.user.id }}">
+
+                                            {% if tutor.avatar %}
+                                            <img src="/media/{{tutor.avatar}}" alt="..." class="avatar" />
+                                            {% else %}
+                                            <img src="{% static 'images/avatar/placeholder.png' %}" alt="..." class="avatar" />
+                                            {% endif %}
+                                            <h4 class="title">{{ tutor.user.username }}</h4>
+                                       </a>
+                                   </div>
+                                   <div class="col-md-10 col-md-offset-1">
+                                       <div class="row">
+                                            <div class="col-md-5">教学时间: </div>
+                                            <div class="col-md-7">{{ tutor.start_of_teaching }}</div>
+                                       </div>
+                                       <div class="row">
+                                            <div class="col-md-5">教师评分: </div>
+                                            <div class="col-md-7 text-right">
+                                                <div class="star-box" style="width:auto ;white-space: nowrap;position: relative;">
+                                                <span class="unfilled" style="color:#d3d3d3; position: absolute;top: 0;left: 0;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                                    <span class="filled" style="color:#e9ce18; white-space: nowrap; overflow: hidden;position: absolute;top: 0;left: 0;width:{{tutor.rating}}em">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                                </div>
+                                            </div>
+                                       </div>
+                                       <div class="row">
+                                            <div class="col-md-5">教学科目: </div>
+                                            <div class="col-md-7">{{ tutor.course.course_name }}</div>
+                                       </div>
+                                   </div>
+                               </div>
+                                <div class="text-center">
+                                    <a href="/scheduler/event/?user={{ tutor.user.id }}" class="btn btn-info btn-round btn-fill">预约课程</a>
+                                </div>
+                               <br>
+                           </div>
+                       </div>
+                   {% endfor %}
+               {% endif %}
+           </div>
+    </div>
+{% endblock %}

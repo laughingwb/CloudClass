@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from tutor.models import Tutor
+from tutor.models import Teacher
 # Create your views here.
 def tutor_list(request):
-    tutors = Tutor.objects.filter().order_by('id');
+    tutors = Teacher.objects.filter().order_by('id');
     print(tutors)
-    return render(request, 'tutor/tutor_list.html',{'tutors':tutors })
+    return render(request, 'tutor/tutor_list.html', {'tutors':tutors })

@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %}预约课程{% endblock %}
+{% block content %}
+<style type="text/css">
+
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 0px 0px;
+            vertical-align: middle;
+        }
+
+        .td-grid {
+            padding: 0px 0px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: block;
+            height: 100%;
+            width: 100%;
+            align: center;
+        }
+
+        .grid-white {
+            background-color: #ffffff;
+
+        }
+
+        .grid-limegreen {
+            background-color: #32cd32;
+
+        }
+
+        .grid-green {
+            background-color: #78ca37;
+            position: relative;
+
+        }
+
+        .grid-yellow {
+            background-color: #ffa724;
+
+        }
+
+        .grid-cyan {
+            background-color: #3ebfff;
+
+        }
+
+    </style>
+    <div class="section section-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10">
+                    <h4 class="text-center">{{ userobject.username }}</h4>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <h1><a href="/scheduler/event/?user={{ user }}&date={{ date }}&action=previous"> &lt; </a></h1>
+            </div>
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-inverse" id="calendar-thead">
+                                {# js fill#}
+                            </thead>
+                            <tbody id="calendar-table">
+                                {# js fill#}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-2">
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <BR>
+                <h1><a href="/scheduler/event/?user={{ user }}&date={{ date }}&action=next"> &gt; </a></h1>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="grid-green">&nbsp;&nbsp;</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{% trans 'available' %}<BR>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="grid-cyan">&nbsp;&nbsp;</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{% trans 'booked by me' %}<BR>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="grid-yellow">&nbsp;&nbsp;</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{% trans 'booked by others' %}<BR>&nbsp;</td>
+                        </tr>
+                    </table>
+                </div><!-- table end -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Setting Modal Core -->
+    <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-labelledby="settingModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="/scheduler/subscribe/" method="POST" id="form_event">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="hidden" name="date" value="{{ date }}"/>
+                            <input type="hidden" name="user" value="{{ user }}"/>
+                            <input type="hidden" id="event_id" name="event_id" value=""/>
+                            <input type="hidden" id="subscription_id" name="subscription_id" value=""/>
+
+                            <input type="hidden" id="event_start" name="event_start" readonly/>
+                            <input type="hidden" id="event_end" name="event_end" readonly/>
+                            <input type="hidden" id="end_recurring_period" name="end_recurring_period" readonly/>
+
+                            <input type="hidden" id="current_dt" name="current_dt" readonly/>
+
+							<input type="hidden" id="quick_appointment" name="quick_appointment" value="0"/>
+
+                            <br>
+                            <table class="table table-responsive">
+                                <tr>
+                                    <td>{% trans 'Class scheduled time' %}:</td>
+                                    <td colspan="3">
+                                        <input type="text" id="display_scheduled_time" name="display_scheduled_time" style="width: 25em;" readonly>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Event date range' %}:</td>
+                                    <td colspan="3">
+                                        <Input type="text" id="display_event_time_range" name="display_event_time_range" style="width: 25em;" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Start of subscription' %}:</td>
+                                    <td>
+                                        <input class="datepicker form-control" data-date-format="yyyy-mm-dd"
+                                               type="text" id="subscription_start" name="subscription_start" style="width: 12em;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'End of subscription' %}:</td>
+                                    <td>
+                                        <input class="datepicker form-control" data-date-format="yyyy-mm-dd"
+                                               type="text" id="subscription_end" name="subscription_end" style="width: 12em;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                    <button type="button" onclick="this.disabled=true;submit_data('recurring');" class="btn btn-info btn-block">
+                                         {% trans 'Make Recurring Appointment' %}
+                                    </button>
+
+
+                                    </td>
+                                </tr>
+                            </table>
+            <hr />
+
+                            <div class="modal-footer text-center">
+                                <div class="col-sm-12" style="display: none;" id="div_delete">
+                                <div class="col-sm-8">
+                                {% trans 'You can only delete the recurring reservation, before you confirm any occurrence of this reservation.' %}
+                                </div>
+                                	<div class="col-sm-4">
+                                    <button type="button" class="btn btn-primary btn-block" onclick="delete_it()">
+                                        {% trans 'delete' %}
+                                    </button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12" style="display: none;" id="div_express_appointment">
+                                <div class="col-sm-6">
+
+                                {% trans 'If you only want to make one-time appointment, then you do not need manually confirm before the reservation becomes effective.' %}
+                                </div>
+                                	<div class="col-sm-6">
+
+                                	<button type="button" onclick="this.disabled=true;submit_data('express');" class="btn btn-info btn-block">
+                                        {% trans 'Make One-time Appointment' %}
+                                	</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_ending %}
+    {{ block.super }}
+    <script src="{% static 'js/webapp-scheduler.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+
+    <script type="text/javascript">
+        var json = '{{ occurrences|safe }}';
+        var ds = '{{ date }}';
+        var user = '{{ user }}';
+        var myself = '{{ request.user.id }}';
+        var nameOfDay = ["{% trans 'Mon' %}", "{% trans 'Tue' %}", "{% trans 'Wed' %}", "{% trans 'Thu' %}", "{% trans 'Fri' %}", "{% trans 'Sat' %}", "{% trans 'Sun' %}"];
+
+        // 删除 subscrption
+        var delete_it = function () {
+
+            if ($('#subscription_id').val() == '')
+                return;
+
+            $.get("/scheduler/delete_subscribe/?subscription_id=" + $('#subscription_id').val())
+                    .done(function (msg) {
+                        alert(msg);
+                        window.location.reload();
+            });
+        };
+
+        $(document).ready(function () {
+
+            var thead_html = '<tr><th class="text-center td-grid">Time</th>';
+
+            for (var day = 0; day < nameOfDay.length; day++) {
+                thead_html = thead_html + '<td class="text-center td-grid">'
+                        + getISODateString(getDateOfWeek(ds, day + 1)) + '<br>(' + nameOfDay[day] + ')</td>';
+            }
+            thead_html = thead_html + "</tr>";
+
+            $(thead_html).appendTo('#calendar-thead');
+
+            var today = new Date();
+            var tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
+            //temparary solution for json encoding/decoding
+            //if(json != null && json.length > 2) {
+            //	json = json.substring(1,json.length-1);
+            //}
+
+            var events;
+            if (json.length > 0)
+                events = JSON.parse(json);
+
+
+            for (var hour = 7; hour < 22; hour++) {
+                var html = '<tr><td class="text-center td-grid">' + ('0' + hour).slice(-2) + ':00</td>';
+
+                for (var day = 0; day < nameOfDay.length; day++) {
+
+                    var clickable = false;
+
+                    var grid_style = "grid-white";
+                    var event_id = "";
+                    var event_start = "";
+                    var event_end = "";
+                    var end_recurrring_period = "";
+                    var subscription_id = "";
+                    var subscription_start = "";
+                    var subscription_end = "";
+
+                    if (events != null) {
+
+                        for (var i = 0; i < events.length; i++) {
+                            //console.log(events[i].start);
+
+                            var start = new Date(events[i].start);
+                            var day_in_the_week = start.getDay();
+                            if (day_in_the_week == 0)
+                                day_in_the_week = 7;
+                            if (start.getHours() == hour && day_in_the_week == day + 1) {
+                                //console.log("day:" + events[i].day_of_the_week + "; hour:" + events[i].hour_of_the_day);
+                                //console.log("day:" + nameOfDay[day] + "; hour:" + hour);
+                                event_id = events[i].event_id;
+                                event_start = events[i].event_start;
+                                event_end = events[i].event_end;
+                                end_recurring_period = events[i].event_end_recurring_period;
+                                subscription_id = events[i].subscription_id;
+                                subscription_start = events[i].subscription_start;
+                                subscription_end = events[i].subscription_end;
+                                subscription_invitee = events[i].subscription_invitee;
+                                if (subscription_invitee != null && subscription_invitee == myself) {
+                                    grid_style = "grid-cyan";
+                                    clickable = true;
+                                }
+                                else if (subscription_invitee != null && subscription_invitee != myself) {
+                                    grid_style = "grid-yellow";
+                                    clickable = false;
+                                }
+                                else {
+                                    grid_style = "grid-green";
+                                    clickable = true;
+                                }
+                            }
+                        }
+                    }
+
+                    var click_start = "";
+                    var click_end = "";
+                    if (clickable) {
+                        click_start = '<a href="#" data-toggle="modal" data-target="#settingModal" onclick="toggleGrid(\'';
+                        click_start = click_start + event_id + '\',\'';
+                        click_start = click_start + event_start + '\',\'';
+                        click_start = click_start + event_end + '\',\'';
+                        click_start = click_start + end_recurring_period + '\',\'';
+                        var t1 = getDateOfWeek(ds, day + 1);
+                        t1.setHours(hour);
+                        click_start = click_start + t1.toISOString() + '\',\'';
+                        click_start = click_start + subscription_id + '\',\'';
+                        click_start = click_start + subscription_start + '\',\'';
+                        click_start = click_start + subscription_end + '\')">';
+                        click_end = '</a>';
+                    }
+                    var debug_event_id = "";
+                    {% if isdebug  %}
+                        if (subscription_id)
+                            debug_event_id = '<span style="color:black;">' + event_id + '-' + subscription_id + '</span>';
+                        else
+                            debug_event_id = '<span style="color:black;">' + event_id + '</span>';
+                    {% endif %}
+
+                    html = html + '<td class="td-grid">' + click_start + '<div class="grid '
+                            + grid_style
+                            + '" id="' + 'grid' + day + hour + '">&nbsp;'+debug_event_id+'</div>'
+                            + click_end + '</td>';
+
+                }
+                html = html + '</tr>';
+                $(html).appendTo('#calendar-table');
+            }
+        });
+
+        function toggleGrid(event_id, event_start, event_end, end_recurring_period, current_dt, s_id, s_start, s_end) {
+
+            $("#event_id").val(event_id);
+            //$("#event_start").val(event_start);
+            //$("#event_end").val(event_end);
+            var e_start = new Date(event_start);
+            var e_end = new Date(event_end);
+            var e_end_recurring_period = new Date(end_recurring_period);
+
+            var str_scheduled_time = e_start.toLocaleTimeString()
+                + " - " + e_end.toLocaleTimeString()
+                + " {% trans " every " %}" + nameOfDay[e_start.getDay() == 0 ? 6 : e_start.getDay() - 1];
+            $("#display_scheduled_time").val(str_scheduled_time);
+
+            $("#event_start").val(e_start.toString());
+            $("#event_end").val(e_end.toString());
+            $("#end_recurring_period").val(end_recurring_period);
+
+            var str_event_time_range = " {% trans 'From ' %}"
+            	+ getISODateString(e_start)
+            	+ " {% trans ' to ' %}"
+            	+ getISODateString(e_end_recurring_period);
+            $("#display_event_time_range").val(str_event_time_range);
+
+            $("#current_dt").val(new Date(current_dt).toISOString());
+
+            if (s_id != null && s_id != "null") {
+
+            	$("#div_express_appointment").hide();
+                $("#div_delete").show();
+
+            	$("#subscription_id").val(s_id);
+                //$("#subscription_start").val(s_start);
+                //$("#subscription_end").val(s_end);
+                var t_s_start = new Date(s_start);
+                $("#subscription_start").val(getISODateString(t_s_start));
+                //$("#subscription_start").datepicker("setDate", t_s_start.toISOString().substring(0,10));
+                var t_s_end = new Date(s_end);
+                t_s_end.setDate(t_s_end.getDate() - 1);
+                $("#subscription_end").val(getISODateString(t_s_end));
+                //$("#subscription_end").datepicker("setDate", t_s_end.toISOString().substring(0,10));
+
+
+            }
+            else {
+            	$("#subscription_id").val(null);
+
+                var t_s_end = new Date(event_end);
+                t_s_end.setMonth(t_s_end.getMonth() + 1);
+                if (s_start != "null")
+                    var t_s_start = new Date(s_start);
+                else
+                    var t_s_start = new Date(current_dt);
+                var t_subscription_start_dt = new Date(current_dt);
+                t_subscription_start_dt.setHours(t_s_start.getHours());
+                t_subscription_start_dt.setMinutes(t_s_start.getMinutes());
+                var t_subscription_end_dt = new Date(t_subscription_start_dt);
+                t_subscription_end_dt.setMonth(t_subscription_end_dt.getMonth() + 1);
+                //$("#subscription_start").val(event_start);
+                //$("#subscription_end").val(s_end.toISOString());
+                $("#subscription_start").val(getISODateString(t_subscription_start_dt));
+                $("#subscription_end").val(getISODateString(t_subscription_end_dt));
+
+                $("#div_delete").hide();
+                $("#div_express_appointment").show();
+
+            }
+        }
+
+        function verification() {
+
+            var e_start = $("#event_start").val();
+            var e_end_recurring_period = $("#end_recurring_period").val(); // 使用循环结束时间代替event_end
+
+            var s_start = $("#subscription_start").val();
+            var s_end = $("#subscription_end").val();
+
+            //alert($('#quick_appointment').val());
+            if ($('#quick_appointment').val() == "0") {
+            	if (! isDateString(s_start))
+                    return "{% trans 'you must fill a subscription Start Date.' %}";
+                //alert(s_end);
+            	if (! isDateString(s_end))
+                    return "{% trans 'None quick appointment End Date is must fill' %}";
+
+            	if (isEarlier(s_start, getISODateString(e_start)))
+                    return "{% trans 'Subscription start must be later than the Event start date.' %}";
+                if (isLater(s_start, e_end_recurring_period))
+                    return "{% trans 'Subscription start must be earlier than the Event end date.' %}";
+                if (isEarlier(s_end, getISODateString(e_start)))
+                    return "{% trans 'Subscription end must be later than the Event start date.' %}";
+                if (isEarlier(s_end, s_start))
+                    return "{% trans 'Subscription end must be later than the Subscription start date.' %}";
+
+            }
+
+            return undefined;
+        }
+
+        function submit_data(type) {
+
+            // 添加时间
+            if(type=="express")
+            	$("#quick_appointment").val(1);
+
+            var msg = verification();
+            if (!msg) {
+                $("#form_event").submit();
+            } else {
+                alert(msg)
+            }
+        }
+
+
+
+        $(function () {
+            $("input.datepicker").datepicker({format: 'yyyy-mm-dd'});
+        });
+    </script>
+
+{% endblock %}

@@ -148,27 +148,27 @@
                             <br>
                             <table class="table table-responsive">
                                 <tr>
-                                    <td>{% trans 'Class scheduled time' %}:</td>
+                                    <td>约课时间:</td>
                                     <td colspan="3">
                                         <input type="text" id="display_scheduled_time" name="display_scheduled_time" style="width: 25em;" readonly>
                                     </td>
 
                                 </tr>
                                 <tr>
-                                    <td>{% trans 'Event date range' %}:</td>
+                                    <td>约课日期范围:</td>
                                     <td colspan="3">
                                         <Input type="text" id="display_event_time_range" name="display_event_time_range" style="width: 25em;" readonly>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>{% trans 'Start of subscription' %}:</td>
+                                    <td>预约起始时间:</td>
                                     <td>
                                         <input class="datepicker form-control" data-date-format="yyyy-mm-dd"
                                                type="text" id="subscription_start" name="subscription_start" style="width: 12em;">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>{% trans 'End of subscription' %}:</td>
+                                    <td>预约结束时间:</td>
                                     <td>
                                         <input class="datepicker form-control" data-date-format="yyyy-mm-dd"
                                                type="text" id="subscription_end" name="subscription_end" style="width: 12em;">
@@ -177,7 +177,7 @@
                                 <tr>
                                     <td colspan="4">
                                     <button type="button" onclick="this.disabled=true;submit_data('recurring');" class="btn btn-info btn-block">
-                                         {% trans 'Make Recurring Appointment' %}
+                                         {% trans '多次定期约课' %}
                                     </button>
 
 
@@ -199,13 +199,12 @@
                                 </div>
                                 <div class="col-sm-12" style="display: none;" id="div_express_appointment">
                                 <div class="col-sm-6">
-
-                                {% trans 'If you only want to make one-time appointment, then you do not need manually confirm before the reservation becomes effective.' %}
+                                    如果你只是希望一次性预约本时段的课程，可以选择一键快捷预约；一键快捷预约后无需再次确认，约课安排即生效。
                                 </div>
                                 	<div class="col-sm-6">
 
                                 	<button type="button" onclick="this.disabled=true;submit_data('express');" class="btn btn-info btn-block">
-                                        {% trans 'Make One-time Appointment' %}
+                                        {% trans '单次快捷约课' %}
                                 	</button>
                                 </div>
                                 </div>
@@ -228,7 +227,7 @@
         var ds = '{{ date }}';
         var user = '{{ user }}';
         var myself = '{{ request.user.id }}';
-        var nameOfDay = ["{% trans 'Mon' %}", "{% trans 'Tue' %}", "{% trans 'Wed' %}", "{% trans 'Thu' %}", "{% trans 'Fri' %}", "{% trans 'Sat' %}", "{% trans 'Sun' %}"];
+        var nameOfDay = ["周一", "周二", "周三", "周四", "周五", "周六", "周天"];
 
         // 删除 subscrption
         var delete_it = function () {
@@ -366,16 +365,16 @@
 
             var str_scheduled_time = e_start.toLocaleTimeString()
                 + " - " + e_end.toLocaleTimeString()
-                + " {% trans " every " %}" + nameOfDay[e_start.getDay() == 0 ? 6 : e_start.getDay() - 1];
+                + " 每" + nameOfDay[e_start.getDay() == 0 ? 6 : e_start.getDay() - 1];
             $("#display_scheduled_time").val(str_scheduled_time);
 
             $("#event_start").val(e_start.toString());
             $("#event_end").val(e_end.toString());
             $("#end_recurring_period").val(end_recurring_period);
 
-            var str_event_time_range = " {% trans 'From ' %}"
+            var str_event_time_range = " 从"
             	+ getISODateString(e_start)
-            	+ " {% trans ' to ' %}"
+            	+ " 到"
             	+ getISODateString(e_end_recurring_period);
             $("#display_event_time_range").val(str_event_time_range);
 

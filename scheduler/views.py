@@ -12,6 +12,8 @@ from scheduler.utils import get_next_monday_of_the_week as get_next_monday
 from scheduler.models import Event, EventSubscription, Appointment, EventManager
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
+from scheduler.utils import get_one_week_range
+from django.http import HttpResponse
 # Create your views here.
 
 @login_required
@@ -24,6 +26,39 @@ def entry(request):
 @login_required
 def entry_tutor(request):
     return render(request, 'scheduler/entry_tutor.html')
+
+@login_required
+def delete_event(request):
+    event_id = request.GET.get('event_id', '')
+
+    if event_id == '':
+        return HttpResponse(_("event id is null"))
+    try:
+        en = Event.objects.get(id=event_id)
+        es = EventSubscription.objects.filter(event_id=event_id).first()
+        if es:
+            return HttpResponse(_('event has been subscribed, and it can not be deleted'))
+        en.delete()
+        return HttpResponse(_("event is deleted successfully"))
+
+    except Event.DoesNotExist:
+        return HttpResponse(_("event does not exist"))
+
+@login_required
+def event(request):
+    user = request.GET.get('user')
+    userobject = User.objects.get(id=user)
+
+    d, t_monday, t_next_monday = get_one_week_range(request.GET.get('date'), None, request.GET.get('action'))
+    # result will be filtered by start_date and end_date
+    occurrences = EventManager.get_occurrence_list(user, t_monday, t_next_monday)
+
+    # logger.debug(occurrences)
+
+    msg = request.GET.get("msg")
+    return render(request, 'scheduler/event.html',
+                  {'occurrences': json.dumps([o.__dict__ for o in occurrences], cls=DjangoJSONEncoder), 'date': d,
+                   'user': user, 'msg': msg, 'userobject':userobject})
 
 def scheduler_publish(request):
     date = request.POST.get('date')
@@ -49,6 +84,12 @@ def scheduler_publish(request):
         event_add.save()
 
     return redirect('/scheduler/calendar/',date=date)
+
+@login_required
+def subscribe(request):
+    d = request.POST.get('date')
+    user = request.POST.get('user')
+    return redirect('/scheduler/event/?user=' + user, date=d)
 
 @login_required
 def calendar(request):

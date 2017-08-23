@@ -56,3 +56,32 @@ def get_localized_datetime(date):
         return users_tz.localize(t_date, is_dst=None)
     else:
         return t_date.astimezone(users_tz)
+
+
+def get_one_week_range(cur_date, t_default=None, action=None):
+    d = cur_date
+    if not d:
+        if not t_default:
+            d_default = date.today()
+        else:
+            d_default = t_default.date()
+        d = d_default.strftime('%Y-%m-%d');
+
+    users_tz = timezone.get_current_timezone()
+
+    t_datetime = get_localized_datetime(d)
+
+    # logger.debug('current_date is: %s, and parsed as %s' % (d, t_datetime))
+
+    if action:
+        if action == 'previous':
+            t_datetime = t_datetime - timedelta(days=7)
+        elif action == 'next':
+            t_datetime = t_datetime + timedelta(days=7)
+
+    d = t_datetime.strftime('%Y-%m-%d')
+
+    t_monday = get_monday_of_the_week(t_datetime)
+    t_next_monday = get_next_monday_of_the_week(t_datetime)
+
+    return d, t_monday, t_next_monday

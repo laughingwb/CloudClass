@@ -85,3 +85,6 @@ def get_one_week_range(cur_date, t_default=None, action=None):
     t_next_monday = get_next_monday_of_the_week(t_datetime)
 
     return d, t_monday, t_next_monday
+
+def get_hours_in_the_week(t_time):
+    return t_time.weekday() * 24 + t_time.hour + t_time.minute/60

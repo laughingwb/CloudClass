@@ -4,8 +4,7 @@ from django.db.models.fields.related import ForeignKey
 from functools import cmp_to_key
 from django.db.models import Q
 from datetime import datetime, timedelta
-from django.utils.translation import ugettext as _
-
+from .utils import get_hours_in_the_week
 
 class EventManager(models.Manager):
     def get_occurrence_list(tutor, start, end):
@@ -82,6 +81,27 @@ class EventManager(models.Manager):
                 # logger.debug('occurrence is removed: {}'.format(o))
 
         return occurrences
+
+    def check_subscription_conflict(user_id, event, start, end, subscription_id):
+
+        rel_hour = get_hours_in_the_week(event.start)
+
+        all_event_subscriptions = EventSubscription.objects.filter(
+            Q(invitee__id=user_id) | Q(event__user__id=user_id)).exclude(start_time__gt=end).exclude(end_time__lt=start)
+
+        if subscription_id:
+
+            all_event_subscriptions = all_event_subscriptions.exclude(id=subscription_id)
+
+        for event_sub in all_event_subscriptions:
+            start_time = event_sub.event.start
+            # logger.debug('rel_hour of new subscription is {}, and existing is {}'.format(rel_hour, start_time.weekday() * 24 + start_time.hour + start_time.minute/60))
+            if abs(get_hours_in_the_week(start_time) - rel_hour) >= 1:
+                continue
+
+            return True, event_sub
+
+        return False, None
 
 # Create your models here.
 
@@ -172,7 +192,7 @@ class Appointment(models.Model):
     scheduled_time = models.DateTimeField()
     hosts = models.ManyToManyField(User, related_name='hosts')
     invitees = models.ManyToManyField(User, related_name='invitees')
-    status = models.IntegerField(choices=STATUS_CHOICES)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=CONFIRMED)
     event_subscription = models.ForeignKey(EventSubscription, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)

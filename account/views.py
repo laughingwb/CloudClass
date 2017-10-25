@@ -19,6 +19,7 @@ def signup(request):
     return render(request, 'account/signup.html')
 
 def loginhtml(request):
+
     _jpush = jpush.JPush(u'47cd8c54b7d852e01ffb82ac', u'5838452a357f53a742fb509d')
     _jpush.set_logging("DEBUG")
 
@@ -26,6 +27,9 @@ def loginhtml(request):
     push.audience = jpush.all_
     push.notification = jpush.notification(alert="!hello python jpush api")
     push.platform = jpush.all_
+    push.options = {
+        "apns_production": "false"
+    }
     try:
         response = push.send()
         print("send")
@@ -42,7 +46,6 @@ def loginhtml(request):
     return render(request, 'account/login.html')
 
 def loginAccount(request):
-
 
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
